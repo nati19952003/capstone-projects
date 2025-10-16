@@ -1,6 +1,6 @@
 ---
 config:
-  layout: fixed
+  layout: dagre
 ---
 flowchart TD
  subgraph U["User & UI Module"]
