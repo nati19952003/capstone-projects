@@ -1,0 +1,67 @@
+---
+config:
+  layout: elk
+---
+flowchart TB
+ subgraph CL["Client Layer"]
+        UI["Web Interface (End Users)"]
+        AG["API Gateway"]
+  end
+ subgraph PL["Processing Layer"]
+        DPM["Document Processing Manager"]
+        PP["Preprocessing"]
+        TD["Table Detection"]
+        AIML["AI/ML Integration Layer"]
+        OCR["OCR Engine"]
+        PM["Processing Module"]
+  end
+ subgraph DH["Data Handling Layer"]
+        DC["Data Converter"]
+        EM["Export Module"]
+        DB["Database Module"]
+  end
+ subgraph ML["Monitoring & Reliability"]
+        MON["Monitoring Module"]
+  end
+    UI -- Upload PDF Document --> AG
+    AG -- Start Document Processing --> DPM
+    DPM -- Send Enhanced Image --> PP
+    PP -- Detect Table Regions --> TD
+    TD -- Return Bounding Boxes --> AIML
+    AIML -- Send Regions to OCR --> OCR
+    OCR -- Return Extracted Text --> DC
+    DC -- Send Text + Coordinates --> EM
+    EM -- Store Structured Data --> DB
+    DB -- Acknowledge Storage --> EM
+    EM -- Generate Output Files --> DPM
+    DPM -- Processing Complete --> UI
+    UI -- Request Multi Format --> AG
+    AG -- GET /exportFormats --> DPM
+    DPM -- Generate CSV/XLSX/JSON --> DC
+    DC -- Parallel Format Generation --> EM
+    EM -- Store File Metadata --> DB
+    DB -- Metadata Stored --> EM
+    EM -- Return Download Links --> AG
+    AG -- Provide Links --> UI
+    DPM -- Execute Processing --> PM
+    PM -- Report Error --> MON
+    MON -- Log Error Details --> DB
+    DPM -- Retry Processing --> PM
+    PM -- Report Recovery Success --> MON
+    MON -- Log Recovery --> DB
+     UI:::client
+     AG:::client
+     DPM:::process
+     PP:::process
+     TD:::process
+     AIML:::process
+     OCR:::process
+     PM:::process
+     DC:::data
+     EM:::data
+     DB:::data
+     MON:::monitor
+    classDef client fill:#D0E6FF,stroke:#3C78D8,color:#000,stroke-width:1px
+    classDef process fill:#FFE6C7,stroke:#E69138,color:#000,stroke-width:1px
+    classDef data fill:#E5F8D0,stroke:#38761D,color:#000,stroke-width:1px
+    classDef monitor fill:#EAD9FF,stroke:#674EA7,color:#000,stroke-width:1px
