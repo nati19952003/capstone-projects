@@ -1,0 +1,78 @@
+---
+config:
+  layout: dagre
+---
+flowchart TB
+ subgraph CL["Client Layer"]
+        UI["Web Interface (End Users)"]
+        AG["API Gateway"]
+        CP_Out[/"Client Output Port"/]
+  end
+ subgraph PL["Processing Layer"]
+        P_In[/"Processing Input Port"/]
+        DPM["Document Processing Manager"]
+        PP["Preprocessing"]
+        TD["Table Detection"]
+        AIML["AI/ML Integration Layer"]
+        OCR["OCR Engine"]
+        PM["Processing Module"]
+        P_Out[/"Processing Output Port"/]
+  end
+ subgraph DH["Data Handling Layer"]
+        D_In[/"Data Input Port"/]
+        DC["Data Converter"]
+        EM["Export Module"]
+        DB["Database Module"]
+        D_Out[/"Data Output Port"/]
+  end
+ subgraph ML["Monitoring & Reliability"]
+        M_In[/"Monitoring Input Port"/]
+        MON["Monitoring Module"]
+        M_Out[/"Monitoring Output Port"/]
+  end
+    UI -- Upload PDF Document --> AG
+    AG -- Start Document Processing --> CP_Out
+    CP_Out -- Send Document --> P_In
+    P_In -- Send Enhanced Image --> PP
+    PP -- Detect Table Regions --> TD
+    TD -- Return Bounding Boxes --> AIML
+    AIML -- Send Regions to OCR --> OCR
+    OCR -- Return Extracted Text --> DC
+    DC -- Send Text + Coordinates --> D_In
+    D_In -- Store Structured Data --> DB
+    DB -- Log Error Details --> M_In
+    M_Out -- Report Recovery Success --> DB
+    D_Out -- Return Download Links --> DC
+    DC -- Return Extracted Data --> OCR
+    OCR -- Return Text Regions --> AIML
+    AIML -- Return Bounding Boxes --> TD
+    TD -- Return Detection Results --> PP
+    PP -- Return Processed Image --> DPM
+    DPM -- Processing Complete --> AG
+    AG -- Display Results --> UI
+    PM -- Report Error --> M_In
+    MON -- Log Recovery --> DB
+    MON -- Report Status --> P_In
+     UI:::client
+     AG:::client
+     CP_Out:::client
+     P_In:::process
+     DPM:::process
+     PP:::process
+     TD:::process
+     AIML:::process
+     OCR:::process
+     PM:::process
+     P_Out:::process
+     D_In:::data
+     DC:::data
+     EM:::data
+     DB:::data
+     D_Out:::data
+     M_In:::monitor
+     MON:::monitor
+     M_Out:::monitor
+    classDef client fill:#D0E6FF,stroke:#3C78D8,color:#000,stroke-width:1px
+    classDef process fill:#FFE6C7,stroke:#E69138,color:#000,stroke-width:1px
+    classDef data fill:#E5F8D0,stroke:#38761D,color:#000,stroke-width:1px
+    classDef monitor fill:#EAD9FF,stroke:#674EA7,color:#000,stroke-width:1px
