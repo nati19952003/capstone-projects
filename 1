@@ -1,0 +1,80 @@
+---
+config:
+  layout: fixed
+---
+flowchart TD
+ subgraph U["User & UI Module"]
+        U1["End Users"]
+        U2["Web Interface / UI Module"]
+  end
+ subgraph A["API Gateway"]
+        A1["Request Routing & API Management"]
+  end
+ subgraph DPM["Document Processing Manager"]
+        DPM1["Document Controller"]
+        DPM2["Workflow Orchestrator"]
+  end
+ subgraph P["Processing & AI/ML Layer"]
+        P1["Preprocessing Module"]
+        P2["Table Detection Module"]
+        P3["AI/ML Integration Layer"]
+        P4["OCR Engine"]
+        P5["Data Converter"]
+  end
+ subgraph M["Monitoring & Recovery Module"]
+        M1["Error Detection"]
+        M2["Retry & Recovery Handler"]
+  end
+ subgraph E["Export & Storage Layer"]
+        E1["Export Module"]
+        E2["Tabular Data Storage"]
+        E3["Database Module"]
+  end
+    U1 -- Upload Document / Request Export --> U2
+    U2 -- POST /documents/upload --> A
+    A -- Start Document Processing --> DPM1
+    DPM1 --> DPM2
+    DPM2 -- Send Enhanced Image --> P1
+    P1 --> P2
+    P2 -- Detect Tables --> P3
+    P3 --> P4
+    P4 -- Extracted Text --> P5
+    P5 -- Generate Structured Data --> E2
+    E2 -- Store Data --> E3
+    E3 -- Return Status --> DPM2
+    DPM2 -- Processing Complete --> A
+    A -- Results Available --> U2
+    DPM2 -- Execute Processing --> P3
+    P3 -- ERROR --> M1
+    M1 -- Log Error Details --> E3
+    M1 --> M2
+    M2 -- Retry Processing --> P3
+    P3 -- Success --> DPM2
+    DPM2 -- Report Recovery Success --> M2
+    U2 -- Request Export Formats --> A
+    A -- GET /export/formats --> DPM2
+    DPM2 -- Generate CSV / JSON / XLSX --> E1
+    E1 -- Store File Metadata --> E3
+    E1 -- Return Download Links --> U2
+     U1:::user
+     U2:::user
+     A1:::api
+     DPM1:::dpm
+     DPM2:::dpm
+     P1:::proc
+     P2:::proc
+     P3:::proc
+     P4:::proc
+     P5:::proc
+     M1:::monitor
+     M2:::monitor
+     E1:::export
+     E2:::export
+     E3:::export
+     A:::api
+    classDef user fill:#CDEAFF,stroke:#3A79A4,stroke-width:1px,color:#000
+    classDef api fill:#F5F5DC,stroke:#999,stroke-width:1px,color:#000
+    classDef dpm fill:#E6F2FF,stroke:#3A79A4,stroke-width:1px,color:#000
+    classDef proc fill:#FFF2CC,stroke:#D6A600,stroke-width:1px,color:#000
+    classDef monitor fill:#FFE0E0,stroke:#CC6666,stroke-width:1px,color:#000
+    classDef export fill:#D9EAD3,stroke:#6AA84F,stroke-width:1px,color:#000
