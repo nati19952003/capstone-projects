@@ -1,0 +1,95 @@
+---
+config:
+  layout: dagre
+---
+flowchart TB
+ subgraph CL["Client Layer"]
+        UI["Web Interface (End Users)"]
+        AG["API Gateway"]
+        CP_Out[/"Client Output Port"/]
+  end
+ subgraph PL["Processing Layer"]
+        P_In[/"Processing Input Port"/]
+        DPM["Document Processing Manager"]
+        PP["Preprocessing"]
+        TD["Table Detection"]
+        AIML["ATES Integration Layer"]
+        OCR["OCR Engine"]
+        PM["Processing Module"]
+        P_Out[/"Processing Output Port"/]
+  end
+ subgraph DH["Data Handling Layer"]
+        D_In[/"Data Input Port"/]
+        DC["Data Converter"]
+        EM["Export Module"]
+        DB["Database Module"]
+        D_Out[/"Data Output Port"/]
+  end
+ subgraph ML["Monitoring & Reliability"]
+        M_In[/"Monitoring Input Port"/]
+        MON["Monitoring Module"]
+        M_Out[/"Monitoring Output Port"/]
+  end
+
+    %% Request(아래로) — 원문 라벨만 사용
+    UI -- Upload PDF Document --> AG
+    AG -- Start Document Processing --> CP_Out
+    CP_Out -- Send Document --> P_In
+    P_In -- Send Enhanced Image --> PP
+    PP -- Detect Table Regions --> TD
+    TD -- Return Bounding Boxes --> AIML
+    AIML -- Send Regions to OCR --> OCR
+    OCR -- Return Extracted Text --> DC
+
+    %% ⬇︎ EM 경유(추가)
+    DC -- Send Text + Coordinates --> EM
+    EM -- Store File Metadata --> DB
+
+    %% 기존 D_In 경로 유지(고아 방지)
+    DC -- Send Text + Coordinates --> D_In
+    D_In -- Store Structured Data --> DB
+
+    DB -- Log Error Details --> M_In
+    PM -- Report Error --> M_In
+
+    %% Response(위로) — 원문 라벨만 사용
+    MON -- Log Recovery --> DB
+    MON -- Report Status --> P_In
+    DB -- Metadata Stored --> EM
+
+    %% ⬆︎ 다운로드 링크 경로(수정)
+    EM -- Return Download Links --> D_Out
+    D_Out -- Provide Links --> AG
+    AG -- Display Results --> UI
+
+    %% Processing 완료를 P_Out로 노출(추가)
+    DPM -- Processing Complete --> P_Out
+    P_Out -- Processing Complete --> AG
+
+    M_Out -- Report Recovery Success --> DB
+
+     %% 색상 클래스
+     UI:::client
+     AG:::client
+     CP_Out:::client
+     P_In:::process
+     DPM:::process
+     PP:::process
+     TD:::process
+     AIML:::process
+     OCR:::process
+     PM:::process
+     P_Out:::process
+     D_In:::data
+     DC:::data
+     EM:::data
+     DB:::data
+     D_Out:::data
+     M_In:::monitor
+     MON:::monitor
+     M_Out:::monitor
+
+    classDef client fill:#D0E6FF,stroke:#3C78D8,color:#000,stroke-width:1px
+    classDef process fill:#FFE6C7,stroke:#E69138,color:#000,stroke-width:1px
+    classDef data fill:#E5F8D0,stroke:#38761D,color:#000,stroke-width:1px
+    classDef monitor fill:#EAD9FF,stroke:#674EA7,color:#000,stroke-width:1px
