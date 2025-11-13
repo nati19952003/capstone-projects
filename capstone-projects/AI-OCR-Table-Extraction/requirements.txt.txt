@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+opencv-python
+pandas
+paddleocr
+pytesseract
+torch
+sqlalchemy
+mysql-connector-python
+python-multipart
