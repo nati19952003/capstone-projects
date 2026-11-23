@@ -4,7 +4,7 @@ This project automatically extracts tables from documents using OCR and AI.
 
 ## Tech Stack
 - **Backend**: FastAPI
-- **OCR Engines**: PaddleOCR, EasyOCR, Tesseract (with fallback support)
+- **OCR Engines**: PaddleOCR
 - **Table Detection**: YOLOv8 (with contour-based fallback)
 - **Database**: MongoDB
 - **Authentication**: JWT with bcrypt
